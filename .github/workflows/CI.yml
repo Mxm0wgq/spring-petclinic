@@ -47,4 +47,4 @@ jobs:
 
       - name: Push img to ecr
         run: |
-          docker push petclinic:latest ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petclinic:latest
+          docker push ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petclinic:latest
