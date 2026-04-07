@@ -43,7 +43,7 @@ jobs:
 
       - name: Repo creation
         run: |
-          aws ecr create-repository --repository-name petclinic --region ${{secrets.AWS_REGION}}
+          aws ecr create-repository --repository-name petsclinic1 --region ${{secrets.AWS_REGION}}
 
       - name: Tag img
         run: |
