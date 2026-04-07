@@ -27,5 +27,47 @@ jobs:
       
       - name: Build Docker image 
         run: docker build -t petclinic .
+
+  steps:
+
+      - name: Checkout code 
+       uses: actions/checkout@v4
+
+      - name: Aws Configure 
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+        aws-access-key-id: ${{secrets.AWS_ACCESS_KEY}}
+        aws-secret-key-id: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        aws-region: ${{secrets.AWS_REGION}}
+        
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # - name: Build Docker Img
+      #   Run: |
+      #    docker build -t pets-clinic .
+
+      - name: Tag img
+        Run: |
+         docker tag pets-clinic:latest ${{secrets_AWS_ACCOUNT_ID}}.dkr.ecr ${{secrets_AWS_REGION}}.amazonaws.com/pets-clinic:latest
+
+      -  name: Push img to ecr
+         Run: |
+           docker push pets-clinic:latest ${{secrets_AWS_ACCOUNT_ID}}.dkr.ecr ${{secrets_AWS_REGION}}.amazonaws.com/pets-clinic:latest
+
+           
+        
+
+      
+
+      
+
+        
+
+        
+        
+
+        
       
   
