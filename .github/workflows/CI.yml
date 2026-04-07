@@ -43,7 +43,7 @@ jobs:
 
       - name: Repo creation
         run: |
-          aws ecr create-repository --repository-name petshsptl --region ${{secrets.AWS_REGION}}
+          aws ecr create-repository --repository-name petshsptls --region ${{secrets.AWS_REGION}}
 
       - name: Tag img
         run: |
@@ -51,7 +51,7 @@ jobs:
 
       - name: Push img to ecr
         run: |
-          docker push ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petshsptl:latest
+          docker push ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petshsptls:latest
 
       - name: pull img from ecr to ec2
         run: |
