@@ -46,7 +46,7 @@ jobs:
 
       - name: Repo creation
         run: |
-          aws ecr create-repository --repository-name petshsptlhyd--region ${{secrets.AWS_REGION}}
+          aws ecr create-repository --repository-name petshsptlhyd --region ${{secrets.AWS_REGION}}
 
       - name: Tag img
         run: |
