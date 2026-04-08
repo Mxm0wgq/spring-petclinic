@@ -25,7 +25,7 @@ jobs:
         run: ./mvnw clean package -DskipTests
       
       - name: Build Docker image 
-        run: docker build -t petshsptls .
+        run: docker build -t pets-hsptls .
 
 
       - name: Checkout code 
@@ -47,7 +47,7 @@ jobs:
 
       - name: Tag img
         run: |
-          docker tag petclinic:latest ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petclinic:latest
+          docker tag pets-hsptls:latest ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petshsptls:latest
 
       - name: Push img to ecr
         run: |
