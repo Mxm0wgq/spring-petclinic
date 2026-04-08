@@ -55,4 +55,4 @@ jobs:
 
       - name: pull img from ecr to ec2
         run: |
-          docker pull ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petclinic:latest
+          docker pull ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petshsptls:latest
