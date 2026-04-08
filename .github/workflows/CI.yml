@@ -23,9 +23,12 @@ jobs:
       
       - name: Build JAR
         run: ./mvnw clean package -DskipTests
+
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
       
       - name: Build Docker image 
-        run: docker build -t pets-hsptl .
+        run: docker build -t pets-hsptl:$IMAGE_TAG .
 
 
       - name: Checkout code 
@@ -43,16 +46,16 @@ jobs:
 
       - name: Repo creation
         run: |
-          aws ecr create-repository --repository-name petshsptls --region ${{secrets.AWS_REGION}}
+          aws ecr create-repository --repository-name petshsptlhyd--region ${{secrets.AWS_REGION}}
 
       - name: Tag img
         run: |
-          docker tag pets-hsptl:latest ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petshsptls:latest
+          docker tag pets-hsptl:$IMAGE_TAG ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petshsptlhyd:$IMAGE_TAG
 
       - name: Push img to ecr
         run: |
-          docker push ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petshsptls:latest
+          docker push ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petshsptlhyd:$IMAGE_TAG
 
-      - name: pull img from ecr to ec2
-        run: |
-          docker pull ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petshsptls:latest
+      # - name: pull img from ecr to ec2
+      #   run: |
+      #     docker pull ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petshsptls:latest
