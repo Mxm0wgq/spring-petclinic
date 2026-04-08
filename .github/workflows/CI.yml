@@ -25,7 +25,7 @@ jobs:
         run: ./mvnw clean package -DskipTests
       
       - name: Build Docker image 
-        run: docker build -t petclinic .
+        run: docker build -t petshsptls .
 
 
       - name: Checkout code 
