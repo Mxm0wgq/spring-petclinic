@@ -30,11 +30,7 @@ jobs:
       - name: Build Docker image 
         run: docker build -t pets-hsptl:$IMAGE_TAG .
 
-
-      - name: Checkout code 
-        uses: actions/checkout@v4
-
-      - name: Aws Configure 
+      - name: Configure AWS 
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
@@ -44,18 +40,35 @@ jobs:
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Repo creation
+      - name: Ensure repo exists
         run: |
-          aws ecr create-repository --repository-name petshsptlhyd --region ${{secrets.AWS_REGION}}
+          aws ecr describe-repositories --repository-names petshsptlhyd || \
+          aws ecr create-repository --repository-name petshsptlhyd
 
-      - name: Tag img
+      - name: Tag image
         run: |
           docker tag pets-hsptl:$IMAGE_TAG ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petshsptlhyd:$IMAGE_TAG
 
-      - name: Push img to ecr
+      - name: Push image
         run: |
           docker push ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petshsptlhyd:$IMAGE_TAG
 
-      # - name: pull img from ecr to ec2
-      #   run: |
-      #     docker pull ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/petshsptls:latest
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+        
+      - name: login to aws 
+        run: aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
+            docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+      - name: docker pull
+        run: docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petshsptlhyd:${{ github.sha }}
+
+      - name: stop and remove container
+        run: docker stop petclinic || true
+              docker rm petclinic || true
+      - name: up n running
+        run: docker run -d --name petclinic -p 8080:8080 petshsptlhyd:${{ github.sha }}
+           
