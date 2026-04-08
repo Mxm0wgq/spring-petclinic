@@ -64,11 +64,11 @@ jobs:
         run: aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
             docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
       - name: docker pull
-        run: docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petshsptlhyd:${{ github.sha }}
+        run: sudo docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petshsptlhyd:${{ github.sha }}
 
       - name: stop and remove container
-        run: docker stop petclinic || true
-              docker rm petclinic || true
+        run: sudo docker stop petclinic || true
+              sudo docker rm petclinic || true
       - name: up n running
-        run: docker run -d --name petclinic -p 8080:8080 petshsptlhyd:${{ github.sha }}
+        run: sudo docker run -d --name petclinic -p 8080:8080 petshsptlhyd:${{ github.sha }}
            
