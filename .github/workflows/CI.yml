@@ -60,15 +60,19 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
         
-      - name: login to aws 
-        run: aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
-            docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-      - name: docker pull
-        run: sudo docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petshsptlhyd:${{ github.sha }}
-
-      - name: stop and remove container
-        run: sudo docker stop petclinic || true
-              sudo docker rm petclinic || true
-      - name: up n running
-        run: sudo docker run -d --name petclinic -p 8080:8080 petshsptlhyd:${{ github.sha }}
-           
+      script: |
+        IMAGE=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/petshsptlhyd:${{ github.sha }}
+  
+        echo "Login to ECR"
+        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
+        sudo docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+  
+        echo "Pull image"
+        sudo docker pull $IMAGE
+  
+        echo "Stop old container"
+        sudo docker stop petclinic || true
+        sudo docker rm petclinic || true
+  
+        echo "Run new container"
+        sudo docker run -d --name petclinic -p 8080:8080 $IMAGE
